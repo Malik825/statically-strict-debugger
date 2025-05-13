@@ -1,16 +1,15 @@
-'use strict'
+'use strict';
 
-import General from "./general.js";
+import General from './general.js';
 import Light from './basicSettings.js';
 
 class AdvanceSettings extends Light {
-    constructor () {
+    constructor() {
         super();
-
     }
 
-    #markup (component) {
-        const {name, numOfLights, autoOn, autoOff} = component;
+    #markup(component) {
+        const { name, numOfLights, autoOn, autoOff } = component;
         return `
         <div class="advanced_features">
             <h3>Advanced features</h3>
@@ -20,7 +19,6 @@ class AdvanceSettings extends Light {
                     <p class="number_of_lights">${numOfLights}</p>
                 </div>
                 <div>
-
                     <p class="auto_on">
                         <span>Automatic turn on:</span>
                         <span>${autoOn}</span>
@@ -57,7 +55,6 @@ class AdvanceSettings extends Light {
                                 <button class="defaultOff-cancel">Cancel</button>
                             </div>
                         </div>
-
                     </div>
                 </section>
                 <section class="summary">
@@ -70,11 +67,8 @@ class AdvanceSettings extends Light {
                     <img src="./assets/svgs/close.svg" alt="close button svg icon">
                 </button>
             </section>
-            <button class="close-btn">
-                <img src="./assets/svgs/close.svg" alt="close button svg icon">
-            </button>
         </div>
-        `
+        `;
     }
 
     #analyticsUsage(data) {
@@ -82,19 +76,19 @@ class AdvanceSettings extends Light {
         new Chart(ctx, {
             type: 'line',
             data: {
-              labels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'],
-              datasets: [{
-                label: 'Hours of usage',
-                data: data,
-                borderWidth: 1
-              }]
+                labels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'],
+                datasets: [{
+                    label: 'Hours of usage',
+                    data: data,
+                    borderWidth: 1
+                }]
             },
             options: {
-              scales: {
-                y: {
-                  beginAtZero: true
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
                 }
-              }
             }
         });
     }
@@ -104,16 +98,13 @@ class AdvanceSettings extends Light {
         const componentData = this.getComponent(selectedRoom);
         const parentElement = this.selector('.advanced_features_container');
         this.removeHidden(parentElement);
-        
-        // display modal view
-        this.renderHTML(this.#markup(componentData), 'afterbegin', parentElement);
 
-        // graph display
+        this.renderHTML(this.#markup(componentData), 'afterbegin', parentElement);
         this.#analyticsUsage(componentData['usage']);
     }
 
     displayCustomization(selectedElement) {
-        const element = this.closestSelector(selectedElement, '.customization', '.customization-details')
+        const element = this.closestSelector(selectedElement, '.customization', '.customization-details');
         this.toggleHidden(element);
     }
 
@@ -121,138 +112,110 @@ class AdvanceSettings extends Light {
         const parentElement = this.selector('.advanced_features_container');
         const childElement = this.selector('.advanced_features');
 
-        // remove child element from the DOM
-        childElement.remove()
-        // hide parent element
+        childElement.remove();
         this.addHidden(parentElement);
     }
 
     customizationCancelled(selectedElement, parentSelectorIdentifier) {
         const element = this.closestSelector(selectedElement, parentSelectorIdentifier, 'input');
         element.value = '';
-        return;
     }
 
     customizeAutomaticOnPreset(selectedElement) {
         const element = this.closestSelector(selectedElement, '.defaultOn', 'input');
         const { value } = element;
-        
-        // when value is falsy
-        if (!!value) return;
-        
+
+        if (!value) {
+            this.displayNotification('Please select a valid time.', 'beforeend', document.body);
+            return;
+        }
+
         const component = this.getComponentData(element, '.advanced_features', '.component_name');
         component.autoOn = value;
         element.value = '';
 
-        // selecting display or markup view
-        const spanElement = this.selector('.auto_on > span:last-child');
-        this.updateMarkupValue(spanElement, component.autoOn);
+        const parentElement = this.selector('.advanced_features_container');
+        const childElement = this.selector('.advanced_features');
+        childElement.remove();
+        this.renderHTML(this.#markup(component), 'afterbegin', parentElement);
+        this.#analyticsUsage(component['usage']);
 
-        // update room data with element
         this.setComponentElement(component);
-        
-        // handle light on automation
-        this.automateLight(component['autoOn'], component);
-
+        this.automateLight(component.autoOn, component, true);
     }
 
     customizeAutomaticOffPreset(selectedElement) {
         const element = this.closestSelector(selectedElement, '.defaultOff', 'input');
         const { value } = element;
 
-        // when value is falsy
-        if (!!value) return; 
-        
+        if (!value) {
+            this.displayNotification('Please select a valid time.', 'beforeend', document.body);
+            return;
+        }
+
         const component = this.getComponentData(element, '.advanced_features', '.component_name');
         component.autoOff = value;
         element.value = '';
 
-        // selecting display or markup view
-        const spanElement = this.selector('.auto_off > span:last-child');
-        this.updateMarkupValue(spanElement, component.autoOff);
+        const parentElement = this.selector('.advanced_features_container');
+        const childElement = this.selector('.advanced_features');
+        childElement.remove();
+        this.renderHTML(this.#markup(component), 'afterbegin', parentElement);
+        this.#analyticsUsage(component['usage']);
 
-        // update room data with element
         this.setComponentElement(component);
-        
-        // handle light on automation
-        this.automateLight(component['autoOff'], component);
-
+        this.automateLight(component.autoOff, component, false);
     }
 
-    getSelectedComponent (componentName) {
+    getSelectedComponent(componentName) {
         if (!componentName) return this.componentsData;
-        const component = this.componentsData[componentName.toLowerCase()];
-        return component;
+        return this.componentsData[componentName.toLowerCase()];
     }
 
-    getSelectedSettings (componentName) {
-        return this.markup(this.getSelectedComponent(componentName));
-
-    }
-
-    setNewData (component, key, data) {
+    setNewData(component, key, data) {
         const selectedComponent = this.componentsData[component.toLowerCase()];
-        return selectedComponent[key] = data;
+        selectedComponent[key] = data;
     }
 
-    capFirstLetter (word) {
-        return word.replace(word.at(0), word.at(0).toUpperCase())
+    capFirstLetter(word) {
+        return word.replace(word.at(0), word.at(0).toUpperCase());
     }
 
-    getObjectDetails() {
-        return this;
-    }
-
-    formatTime (time) {
+    formatTime(time) {
         const [hour, min] = time.split(':');
-        
         const dailyAlarmTime = new Date();
-        dailyAlarmTime.setHours(hour); 
-        dailyAlarmTime.setMinutes(min);
+        dailyAlarmTime.setHours(parseInt(hour, 10));
+        dailyAlarmTime.setMinutes(parseInt(min, 10));
         dailyAlarmTime.setSeconds(0);
-        
         return dailyAlarmTime;
-    };
-
-    timeDifference (selectedTime) {
-        const now = new Date();
-        const setTime = this.formatTime(selectedTime) - now;
-        console.log(setTime, now);
-        return setTime;
     }
 
-    async timer (time, message, component) {
-        return new Promise ((resolve, reject) => {
+    async timer(time, component, turnOn) {
+        return new Promise((resolve) => {
             const checkAndTriggerAlarm = () => {
                 const now = new Date();
-                
                 if (
                     now.getHours() === time.getHours() &&
                     now.getMinutes() === time.getMinutes() &&
                     now.getSeconds() === time.getSeconds()
                 ) {
-                    resolve(this.toggleLightSwitch(component['element']))
-
-                    // stop timer
-                    clearInterval(intervalId);
-                    
+                    component.isLightOn = turnOn;
+                    this.toggleLightSwitch(component['element']);
+                    this.displayNotification(`Light ${turnOn ? 'turned on' : 'turned off'} for ${component.name}.`, 'beforeend', document.body);
+                    resolve();
                 }
-            }
-        
-            // Check every second
+            };
+
             const intervalId = setInterval(checkAndTriggerAlarm, 1000);
-
-        })
+            setTimeout(() => clearInterval(intervalId), 24 * 60 * 60 * 1000);
+        });
     }
 
-    async automateLight (time, component) {
+    async automateLight(time, component, turnOn) {
         const formattedTime = this.formatTime(time);
-        return await this.timer(formattedTime, true, component);
+        await this.timer(formattedTime, component, turnOn);
+        setTimeout(() => this.automateLight(time, component, turnOn), 24 * 60 * 60 * 1000);
     }
-
-
-
-
 }
 
 export default AdvanceSettings;
