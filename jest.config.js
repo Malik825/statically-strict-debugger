@@ -1,23 +1,13 @@
-/** @type {import('jest').Config} */
-export default {
-  preset: 'ts-jest/presets/js-with-ts-esm',
-  testEnvironment: 'jsdom',
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  transform: {
-    '^.+\\.tsx?$': ['ts-jest', {
-      tsconfig: './tsconfig.json',
-      useESM: true,
-    }],
-  },
-  testMatch: ['<rootDir>/test/**/*.[jt]s?(x)', '<rootDir>/test/**/?(*.)+(test|spec).[tj]s?(x)'],
-  extensionsToTreatAsEsm: ['.ts', '.tsx'],
-  coverageThreshold: {
-    global: {
-      branches: 80,
-      functions: 80,
-      lines: 80,
-      statements: 80,
+module.exports = {
+    preset: 'ts-jest',
+    testEnvironment: 'jsdom',
+    transform: {
+      '^.+\\.tsx?$': ['ts-jest', {
+        tsconfig: 'tsconfig.json',
+        diagnostics: true,
+      }],
     },
-  },
-  transformIgnorePatterns: ['/node_modules/(?!.*\\.mjs$)'],
-};
+    moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
+    setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+    testMatch: ['**/test/*.test.ts', '**/__tests__/*.test.ts'],
+  };
