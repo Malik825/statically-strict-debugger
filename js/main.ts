@@ -1,7 +1,8 @@
 'use strict';
 
 import Light from './basicSettings';
-import AdvanceSettings from './advanceSettings';
+import AdvanceSettings from './advanceSettings.ts';
+
 import WifiController from './WifiConfig';
 import AIFeatures from './AiFeatures';
 
@@ -71,7 +72,7 @@ function turnOffAllLights(): void {
 try {
   wifiController.setLightsOffCallback(turnOffAllLights);
   wifiController.init();
-  lightController.setupNotificationClose();
+  // lightController.setupNotificationClose();
 } catch (error) {
   console.error('Error initializing Wi-Fi or notifications:', error);
   lightController.displayNotification('Initialization failed', 'beforeend', document.body);
@@ -157,97 +158,12 @@ if (voiceControlButton) {
     }
   });
 } else {
-  console.error('Voice control button not found');
+  // console.error('Voice control button not found');
   lightController.displayNotification('Voice control button not found', 'beforeend', document.body);
 }
 
-if (generalLightSwitch) {
-  generalLightSwitch.addEventListener('click', () => {
-    if (isGeneralSwitchProcessing) return;
-    isGeneralSwitchProcessing = true;
 
-    setTimeout(() => {
-      isGeneralSwitchProcessing = false;
-    }, 500);
 
-    if (!wifiController.isWifiActive || !wifiController.currentConnection) {
-      lightController.displayNotification('Cannot control lights - no Wi-Fi connection', 'beforeend', document.body);
-      return;
-    }
-
-    const components = Object.values(lightController.componentsData);
-    if (components.length === 0) {
-      lightController.displayNotification('No lights available to toggle', 'beforeend', document.body);
-      return;
-    }
-
-    const anyLightsOff = components.some((comp: ComponentData) => !comp.isLightOn);
-    const targetState = anyLightsOff;
-
-    let successCount = 0;
-    components.forEach((comp: ComponentData) => {
-      if (!comp.element) {
-        console.warn(`Light switch element not found for ${comp.name}`);
-        lightController.displayNotification(`Cannot toggle ${comp.name} - element not found`, 'beforeend', document.body);
-        return;
-      }
-
-      if (comp.isLightOn !== targetState) {
-        comp.isLightOn = targetState;
-        lightController.toggleLightSwitch(comp.element);
-        const lightSwitchImg = comp.element.querySelector('.light-switch img') as HTMLImageElement | null;
-        if (lightSwitchImg) {
-          const expectedSrc = targetState
-            ? lightSwitchImg.dataset.lighton || './assets/svgs/light_bulb.svg'
-            : lightSwitchImg.dataset.lightoff || './assets/svgs/light_bulb_off.svg';
-          console.log(`Toggling ${comp.name} to ${targetState ? 'on' : 'off'}, setting src to ${expectedSrc}`);
-          if (lightSwitchImg.src !== expectedSrc) {
-            lightSwitchImg.src = expectedSrc;
-          }
-        } else {
-          console.warn(`Light switch image not found for ${comp.name}`);
-          lightController.displayNotification(`Cannot update icon for ${comp.name}`, 'beforeend', document.body);
-        }
-
-        if (targetState) {
-          const slider = comp.element.querySelector('.light-intensity') as HTMLInputElement | null;
-          if (slider) {
-            lightController.handleLightIntensitySlider(slider, '5');
-            console.log(`Set ${comp.name} brightness to 5, slider value=${slider.value}`);
-          } else {
-            console.log(`Skipping brightness update for ${comp.name} - slider not found`);
-            comp.lightIntensity = 5;
-            lightController.displayNotification(`Cannot set brightness for ${comp.name} - slider not found`, 'beforeend', document.body);
-          }
-        }
-
-        successCount++;
-      }
-    });
-
-    const generalIcon = generalLightSwitch.querySelector('img') as HTMLImageElement | null;
-    if (generalIcon) {
-      const lightOnSrc = generalIcon.dataset.lighton || './assets/svgs/light_bulb.svg';
-      const lightOffSrc = generalIcon.dataset.lightoff || './assets/svgs/light_bulb_off.svg';
-      generalIcon.src = targetState ? lightOnSrc : lightOffSrc;
-      console.log(`General switch set to ${targetState ? 'on' : 'off'}, src: ${generalIcon.src}`);
-    } else {
-      console.warn('General light switch icon not found');
-      lightController.displayNotification('General light switch icon not found', 'beforeend', document.body);
-    }
-
-    lightController.displayNotification(
-      successCount === components.length
-        ? `All lights turned ${targetState ? 'on' : 'off'}`
-        : `${successCount} light${successCount > 1 ? 's' : ''} turned ${targetState ? 'on' : 'off'}`,
-      'beforeend',
-      document.body
-    );
-  });
-} else {
-  console.error('General light switch not found');
-  lightController.displayNotification('General light switch not found', 'beforeend', document.body);
-}
 
 if (mainRoomsContainer) {
   mainRoomsContainer.addEventListener('click', (e: Event) => {

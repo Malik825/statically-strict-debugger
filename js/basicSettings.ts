@@ -40,42 +40,44 @@ class Light {
     }
   }
 
-  toggleLightSwitch(element: HTMLElement): void {
-    if (!this.wifiController.isWifiActive || !this.wifiController.currentConnection) {
-      this.displayNotification('Cannot toggle light - no Wi-Fi connection', 'beforeend', document.body);
-      return;
-    }
+toggleLightSwitch(element: HTMLElement): void {
+  console.log('Toggle called for element:', element);
+  console.log('WiFi Active:', this.wifiController.isWifiActive, 'Connection:', this.wifiController.currentConnection);
 
-    const roomElement = element.closest('.rooms') as HTMLElement | null;
-    if (!roomElement) {
-      console.warn('Room element not found for light switch');
-      return;
-    }
+  const roomElement = element.closest('.rooms') as HTMLElement | null;
+  console.log('Found room element:', roomElement, 'with classes:', roomElement?.classList);
 
-    const roomName = roomElement.classList[1].replace(/&/g, 'and');
-    const component = this.getComponent(roomName);
-    if (!component) {
-      console.warn(`Component data not found for ${roomName}`);
-      return;
-    }
+  if (!roomElement) return;
 
-    component.isLightOn = !component.isLightOn;
-    const lightSwitchImg = element.querySelector('.light-switch img') as HTMLImageElement | null;
-    if (lightSwitchImg) {
-      const lightOnSrc = lightSwitchImg.dataset.lighton || './assets/svgs/light_bulb.svg';
-      const lightOffSrc = lightSwitchImg.dataset.lightoff || './assets/svgs/light_bulb_off.svg';
-      lightSwitchImg.src = component.isLightOn ? lightOnSrc : lightOffSrc;
-      console.log(`Toggled ${roomName} light to ${component.isLightOn ? 'on' : 'off'}, src: ${lightSwitchImg.src}`);
-    } else {
-      console.warn(`Light switch image not found for ${roomName}`);
-    }
+  const roomName = roomElement.classList[1].replace(/&/g, 'and');
+  console.log('Room name extracted:', roomName);
 
-    this.displayNotification(
-      `${component.name} light turned ${component.isLightOn ? 'on' : 'off'}`,
-      'beforeend',
-      document.body
-    );
+  const component = this.getComponent(roomName);
+  if (!component) {
+    console.warn(`Component data not found for ${roomName}`);
+    return;
   }
+
+  component.isLightOn = !component.isLightOn;
+  console.log(`${component.name} isLightOn toggled to:`, component.isLightOn);
+
+  const lightSwitchImg = element.querySelector('.light-switch img') as HTMLImageElement | null;
+  console.log('Light switch img element:', lightSwitchImg);
+  if (lightSwitchImg) {
+    const lightOnSrc = lightSwitchImg.dataset.lighton || './assets/svgs/light_bulb.svg';
+    const lightOffSrc = lightSwitchImg.dataset.lightoff || './assets/svgs/light_bulb_off.svg';
+    lightSwitchImg.src = component.isLightOn ? lightOnSrc : lightOffSrc;
+  } else {
+    console.warn(`Light switch image not found for ${roomName}`);
+  }
+
+  this.displayNotification(
+    `${component.name} light turned ${component.isLightOn ? 'on' : 'off'}`,
+    'beforeend',
+    document.body
+  );
+}
+
 
   handleLightIntensitySlider(slider: HTMLInputElement, value: string): void {
     if (!this.wifiController.isWifiActive || !this.wifiController.currentConnection) {

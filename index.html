@@ -4,37 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Home Component | Smart Light</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-    <script type="module" src="main.js"></script>
+    <link rel="stylesheet" href="./style.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <script defer type="module" src="./js/main.ts"></script>
 </head>
 <body>
     <!-- homepage ui -->
-    <main class="  ">
+    <main>
         <h1>
-            <!-- <span>Hello Jay,</span> -->
             <span>Welcome, light up</span>
         </h1>
         <button type="button" class="entry_point">
             <img src="./assets/svgs/light_bulb.svg" alt="light bulb svg icon">
             <img src="./assets/svgs/light_bulb_off.svg" alt="light bulb svg icon">
-            <p> Click to begin </p>
+            <p>Click to begin</p>
         </button>
     </main>
 
     <!-- application ui -->
-     <nav class=" hidden ">
-         <button class="network-container">
-             <img src="./assets/svgs/wifi.svg" alt="wifi svg icon">
+    <nav class="hidden">
+        <button class="network-container">
+            <img src="./assets/svgs/wifi.svg" alt="wifi svg icon">
         </button>
-        <button class="general_light_switch">
-            <img src="./assets/svgs/light_bulb.svg" alt="light svg icon">
+        <button class="general_light_switch" id="general_light_switch">
+            <img src="./assets/svgs/light_bulb_off.svg" alt="light svg icon">
         </button>
-        <!-- <section>
-            <p>JAY</p>
-        </section> -->
-     </nav>
-     <section class="application_container  hidden ">
+    </nav>
+    <section class="application_container hidden">
         <div class="flex1">
             <div class="rooms hall">
                 <img src="./assets/imgs/hall.jpg" alt="image of a hall">
@@ -45,13 +41,11 @@
                     </section>
                     <section class="basic_settings_buttons">
                         <button class="light-switch">
-                            <img src="./assets/svgs/light_bulb_off.svg" data-lightOn="./assets/svgs/light_bulb.svg" alt="fullscreen button svg icon">
+                           <img class="light-switch" src="./assets/svgs/light_bulb_off.svg" data-lightOn="./assets/svgs/light_bulb.svg" data-lightOff="./assets/svgs/light_bulb_off.svg" alt="light switch svg icon">
                         </button>
-
                         <button class="advance-settings_modal">
-                            <img src="./assets/svgs/enlarge.svg" alt="fullscreen button svg icon">
+                            <img src="./assets/svgs/enlarge.svg" alt="settings svg icon">
                         </button>
-
                     </section>
                 </div>
             </div>
@@ -64,13 +58,11 @@
                     </section>
                     <section class="basic_settings_buttons">
                         <button class="light-switch">
-                            <img src="./assets/svgs/light_bulb_off.svg" data-lightOn="./assets/svgs/light_bulb.svg" alt="fullscreen button svg icon">
+                           <img class="light-switch" src="./assets/svgs/light_bulb_off.svg" data-lightOn="./assets/svgs/light_bulb.svg" data-lightOff="./assets/svgs/light_bulb_off.svg" alt="light switch svg icon">
                         </button>
-
                         <button class="advance-settings_modal">
-                            <img src="./assets/svgs/enlarge.svg" alt="fullscreen button svg icon">
+                            <img src="./assets/svgs/enlarge.svg" alt="settings svg icon">
                         </button>
-
                     </section>
                 </div>
             </div>
@@ -83,17 +75,14 @@
                     </section>
                     <section class="basic_settings_buttons">
                         <button class="light-switch">
-                            <img src="./assets/svgs/light_bulb_off.svg" data-lightOn="./assets/svgs/light_bulb.svg" alt="fullscreen button svg icon">
+                           <img class="light-switch" src="./assets/svgs/light_bulb_off.svg" data-lightOn="./assets/svgs/light_bulb.svg" data-lightOff="./assets/svgs/light_bulb_off.svg" alt="light switch svg icon">
                         </button>
-
                         <button class="advance-settings_modal">
-                            <img src="./assets/svgs/enlarge.svg" alt="fullscreen button svg icon">
+                            <img src="./assets/svgs/enlarge.svg" alt="settings svg icon">
                         </button>
-
                     </section>
                 </div>
             </div>
-
         </div>
         <div class="flex2">
             <div class="rooms outside_lights">
@@ -105,13 +94,11 @@
                     </section>
                     <section class="basic_settings_buttons">
                         <button class="light-switch">
-                            <img src="./assets/svgs/light_bulb_off.svg" data-lightOn="./assets/svgs/light_bulb.svg" alt="fullscreen button svg icon">
+                           <img class="light-switch" src="./assets/svgs/light_bulb_off.svg" data-lightOn="./assets/svgs/light_bulb.svg" data-lightOff="./assets/svgs/light_bulb_off.svg" alt="light switch svg icon">
                         </button>
-
                         <button class="advance-settings_modal">
-                            <img src="./assets/svgs/enlarge.svg" alt="fullscreen button svg icon">
+                            <img src="./assets/svgs/enlarge.svg" alt="settings svg icon">
                         </button>
-
                     </section>
                 </div>
             </div>
@@ -124,13 +111,11 @@
                     </section>
                     <section class="basic_settings_buttons">
                         <button class="light-switch">
-                            <img src="./assets/svgs/light_bulb_off.svg" data-lightOn="./assets/svgs/light_bulb.svg" alt="fullscreen button svg icon">
+                           <img class="light-switch" src="./assets/svgs/light_bulb_off.svg" data-lightOn="./assets/svgs/light_bulb.svg" data-lightOff="./assets/svgs/light_bulb_off.svg" alt="light switch svg icon">
                         </button>
-
                         <button class="advance-settings_modal">
-                            <img src="./assets/svgs/enlarge.svg" alt="fullscreen button svg icon">
+                            <img src="./assets/svgs/enlarge.svg" alt="settings svg icon">
                         </button>
-
                     </section>
                 </div>
             </div>
@@ -143,17 +128,14 @@
                     </section>
                     <section class="basic_settings_buttons">
                         <button class="light-switch">
-                            <img src="./assets/svgs/light_bulb_off.svg" data-lightOn="./assets/svgs/light_bulb.svg" alt="fullscreen button svg icon">
+                           <img class="light-switch" src="./assets/svgs/light_bulb_off.svg" data-lightOn="./assets/svgs/light_bulb.svg" data-lightOff="./assets/svgs/light_bulb_off.svg" alt="light switch svg icon">
                         </button>
-
                         <button class="advance-settings_modal">
-                            <img src="./assets/svgs/enlarge.svg" alt="fullscreen button svg icon">
+                            <img src="./assets/svgs/enlarge.svg" alt="settings svg icon">
                         </button>
-
                     </section>
                 </div>
             </div>
-
         </div>
         <div class="flex3">
             <div class="rooms corridor walkway_&_corridor">
@@ -165,41 +147,34 @@
                     </section>
                     <section class="basic_settings_buttons">
                         <button class="light-switch">
-                            <img src="./assets/svgs/light_bulb_off.svg" data-lightOn="./assets/svgs/light_bulb.svg" alt="fullscreen button svg icon">
+                           <img class="light-switch" src="./assets/svgs/light_bulb_off.svg" data-lightOn="./assets/svgs/light_bulb.svg" data-lightOff="./assets/svgs/light_bulb_off.svg" alt="light switch svg icon">
                         </button>
-
                         <button class="advance-settings_modal">
-                            <img src="./assets/svgs/enlarge.svg" alt="fullscreen button svg icon">
+                            <img src="./assets/svgs/enlarge.svg" alt="settings svg icon">
                         </button>
-
                     </section>
                 </div>
             </div>
-
         </div>
+    </section>
 
-             <!-- wifi -->
-      <div class="wifi-container ">
-        <section class="wifi_connection_list_container hidden">
-        </section>
+    <section class="advanced_features_container hidden"></section>
+
+    <div class="wifi-container">
         <section class="wifi_notification">
-            <p class="hidden not_available">Wifi is currently not available</p>
-            <!-- <p class="hidden available">Wifi connections available</p> -->
-            <div class="img_svg-container">
-                <img src="./assets/svgs/wifi.svg" alt="disconnected wifi svg logo" data-altWifiImg="./assets/svgs/wifi-disconnected.svg">
+            <p class="not_available">Wifi is currently not available</p>
+            <p class="available hidden" id="show_networks">Wifi is available</p>
+            <div class="img_svg-container" id="wifi_toggle">
+                <img src="./assets/svgs/wifi.svg" alt="wifi svg icon">
             </div>
         </section>
-      </div>
+        <section class="wifi_connection_list_container hidden"></section>
+    </div>
 
-        
-     </section>
-
-     <section class="advanced_features_container hidden "></section>
-
-     <!-- loader effect -->
-     <div class="loader-container hidden">
+    <!-- loader effect -->
+    <div class="loader-container hidden">
         <div class="loader"></div>
-      </div>
-    
+    </div>
+
 </body>
 </html>

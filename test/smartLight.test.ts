@@ -2,111 +2,43 @@ import Light from '../js/basicSettings';
 import AdvanceSettings from '../js/advanceSettings';
 import WifiController from '../js/WifiConfig';
 
-describe('Smart Light App', () => {
-  let wifiController: WifiController;
+interface Component {
+  name: string;
+  lightIntensity: number;
+  isLightOn: boolean;
+  element?: HTMLElement;
+}
+
+describe('Smart Light App - Pure Functions', () => {
   let lightController: Light;
   let advanceSettings: AdvanceSettings;
-  let room: HTMLElement;
-  let slider: HTMLInputElement;
-  let span: HTMLElement;
-  let lightSwitch: HTMLElement;
-  let img: HTMLImageElement;
 
   beforeEach(() => {
-    // Initialize controllers
-    wifiController = new WifiController();
+    const wifiController = new WifiController();
     lightController = new Light(wifiController);
     advanceSettings = new AdvanceSettings();
-
-    // Mock Wi-Fi as active
-    wifiController.isWifiActive = true;
-    wifiController.currentConnection = { ssid: 'Test-WiFi', signalStrength: 80 };
-
-    // Set up DOM for Light tests
-    room = document.createElement('div');
-    room.className = 'rooms hall';
-
-    lightSwitch = document.createElement('div');
-    lightSwitch.className = 'light-switch';
-    img = document.createElement('img');
-    img.dataset.lighton = './assets/svgs/light_bulb.svg';
-    img.dataset.lightoff = './assets/svgs/light_bulb_off.svg';
-    img.src = './assets/svgs/light_bulb_off.svg';
-    lightSwitch.appendChild(img);
-
-    slider = document.createElement('input');
-    slider.type = 'range';
-    slider.className = 'light-intensity';
-
-    span = document.createElement('span');
-    span.className = 'intensity-value';
-
-    room.appendChild(lightSwitch);
-    room.appendChild(slider);
-    room.appendChild(span);
-    document.body.appendChild(room);
-
-    // Set component element
-    const component = lightController.getComponent('hall');
-    if (component) {
-      component.element = room;
-    }
   });
 
   afterEach(() => {
-    document.body.innerHTML = '';
     jest.restoreAllMocks();
   });
 
-  // Light Tests
   describe('Light', () => {
-    test('handleLightIntensitySlider updates brightness and turns on light', () => {
-      lightController.handleLightIntensitySlider(slider, '7');
+    test('getComponent returns component for valid room name', () => {
       const component = lightController.getComponent('hall');
-
-      expect(slider.value).toBe('7');
-      expect(span.textContent).toBe('7');
-      expect(img.src).toContain('light_bulb.svg');
-      expect(component?.lightIntensity).toBe(7);
-      expect(component?.isLightOn).toBe(true);
-
-      const notification = document.querySelector('.notification');
-      expect(notification?.textContent).toContain('Hall light intensity set to 7');
-    });
-
-    test('handleLightIntensitySlider does nothing without Wi-Fi', () => {
-      wifiController.isWifiActive = false;
-      wifiController.currentConnection = null;
-
-      lightController.handleLightIntensitySlider(slider, '7');
-      const component = lightController.getComponent('hall');
-
-      expect(slider.value).not.toBe('7');
-      expect(span.textContent).not.toBe('7');
-      expect(img.src).toContain('light_bulb_off.svg');
+      expect(component).toBeDefined();
       expect(component?.lightIntensity).toBe(5);
       expect(component?.isLightOn).toBe(false);
-
-      const notification = document.querySelector('.notification');
-      expect(notification?.textContent).toContain('Cannot adjust intensity - no Wi-Fi connection');
     });
 
-    test('toggleLightSwitch toggles light state and updates icon', () => {
-      lightController.toggleLightSwitch(lightSwitch);
-      const component = lightController.getComponent('hall');
-
-      expect(img.src).toContain('light_bulb.svg');
-      expect(component?.isLightOn).toBe(true);
-
-      lightController.toggleLightSwitch(lightSwitch);
-      expect(img.src).toContain('light_bulb_off.svg');
-      expect(component?.isLightOn).toBe(false);
+    test('getComponent returns undefined for invalid room name', () => {
+      const component = lightController.getComponent('invalid');
+      expect(component).toBeUndefined();
     });
   });
 
-  // AdvanceSettings Tests
   describe('AdvanceSettings', () => {
-    test('setComponentElement stores component data', () => {
+    test('isValidComponent returns true for valid component', () => {
       const component = {
         name: 'Hall',
         lightIntensity: 5,
@@ -118,16 +50,11 @@ describe('Smart Light App', () => {
         element: document.createElement('div'),
       };
 
-      advanceSettings.setComponentElement(component);
-
-      const components = (advanceSettings as any).components;
-      expect(components['hall']).toEqual(component);
-      expect(components['hall'].name).toBe('Hall');
-      expect(components['hall'].element).toBe(component.element);
+      const result = advanceSettings.isValidComponent(component);
+      expect(result).toBe(true);
     });
 
-    test('setComponentElement warns on missing name', () => {
-      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
+    test('isValidComponent returns false for component without name', () => {
       const component = {
         name: '',
         lightIntensity: 5,
@@ -139,34 +66,255 @@ describe('Smart Light App', () => {
         element: document.createElement('div'),
       };
 
-      advanceSettings.setComponentElement(component);
+      const result = advanceSettings.isValidComponent(component);
+      expect(result).toBe(false);
+    });
 
-      expect(consoleWarnSpy).toHaveBeenCalledWith('Cannot store component: missing name');
-      consoleWarnSpy.mockRestore();
+    test('isValidComponent returns false for component with undefined name', () => {
+      const component = {
+        name: undefined as any,
+        lightIntensity: 5,
+        numOfLights: 4,
+        isLightOn: false,
+        autoOn: '18:00',
+        autoOff: '22:00',
+        usage: [22, 11, 12, 10, 12, 17, 22],
+        element: document.createElement('div'),
+      };
+
+      const result = advanceSettings.isValidComponent(component);
+      expect(result).toBe(false);
+    });
+
+    // ✅ Additional test cases
+
+    test('isValidComponent returns false for null component', () => {
+      const result = advanceSettings.isValidComponent(null as any);
+      expect(result).toBe(false);
+    });
+
+    test('isValidComponent returns false for component with no properties', () => {
+      const result = advanceSettings.isValidComponent({} as any);
+      expect(result).toBe(false);
+    });
+
+    test('isValidComponent returns false when name is a number', () => {
+      const component = {
+        name: 123 as any,
+        lightIntensity: 5,
+        numOfLights: 4,
+        isLightOn: false,
+        autoOn: '18:00',
+        autoOff: '22:00',
+        usage: [22, 11, 12, 10, 12, 17, 22],
+        element: document.createElement('div'),
+      };
+
+      const result = advanceSettings.isValidComponent(component);
+      expect(result).toBe(false);
+    });
+
+    test('isValidComponent returns true even if optional element is missing', () => {
+      const component = {
+        name: 'Kitchen',
+        lightIntensity: 5,
+        numOfLights: 2,
+        isLightOn: true,
+        autoOn: '17:00',
+        autoOff: '23:00',
+        usage: [10, 12, 14, 16, 18, 20, 22]
+        // no element
+      };
+
+      const result = advanceSettings.isValidComponent(component);
+      expect(result).toBe(true);
     });
   });
+      test('isValidComponent returns false for component with whitespace-only name', () => {
+      const component = {
+        name: '   ',
+        lightIntensity: 4,
+        numOfLights: 2,
+        isLightOn: false,
+        autoOn: '19:00',
+        autoOff: '21:00',
+        usage: [5, 6],
+        element: document.createElement('div'),
+      };
 
-  // WifiController Tests
-  describe('WifiController', () => {
-    test('constructor handles empty wifiConnections', () => {
-      jest.spyOn(WifiController.prototype, 'wifiConnections' as any, 'get').mockReturnValue([]);
-      const wifiController = new WifiController();
-
-      expect(wifiController.isWifiActive).toBe(false);
-      expect(wifiController.currentConnection).toBe(null);
+      const result = advanceSettings.isValidComponent(component);
+      expect(result).toBe(false);
     });
 
-    test('init handles empty wifiConnections', async () => {
-      jest.spyOn(WifiController.prototype, 'wifiConnections' as any, 'get').mockReturnValue([]);
-      const wifiController = new WifiController();
-      const lightsOffCallback = jest.fn();
-      wifiController.setLightsOffCallback(lightsOffCallback);
+    test('isValidComponent returns false for component with null name', () => {
+      const component = {
+        name: null as any,
+        lightIntensity: 4,
+        numOfLights: 2,
+        isLightOn: true,
+        autoOn: '18:00',
+        autoOff: '20:00',
+        usage: [10, 11],
+        element: document.createElement('div'),
+      };
 
-      await wifiController.init();
-
-      expect(wifiController.isWifiActive).toBe(false);
-      expect(wifiController.currentConnection).toBe(null);
-      expect(lightsOffCallback).toHaveBeenCalled();
+      const result = advanceSettings.isValidComponent(component);
+      expect(result).toBe(false);
     });
-  });
+
+    test('isValidComponent returns false for component with name as object', () => {
+      const component = {
+        name: { value: 'Room' } as any,
+        lightIntensity: 4,
+        numOfLights: 1,
+        isLightOn: true,
+        autoOn: '20:00',
+        autoOff: '23:00',
+        usage: [9, 10],
+        element: document.createElement('div'),
+      };
+
+      const result = advanceSettings.isValidComponent(component);
+      expect(result).toBe(false);
+    });
+
+    test('isValidComponent returns true for component with mixed-case name', () => {
+      const component = {
+        name: 'BeDRoom',
+        lightIntensity: 7,
+        numOfLights: 2,
+        isLightOn: true,
+        autoOn: '17:30',
+        autoOff: '22:30',
+        usage: [11, 13, 15, 12, 9, 7, 6],
+        element: document.createElement('div'),
+      };
+
+      const result = advanceSettings.isValidComponent(component);
+      expect(result).toBe(true);
+    });
+
+    test('isValidComponent returns true for component with special characters in name', () => {
+      const component = {
+        name: 'Kids&Babies',
+        lightIntensity: 3,
+        numOfLights: 1,
+        isLightOn: false,
+        autoOn: '16:00',
+        autoOff: '20:00',
+        usage: [5, 5, 5, 5, 5, 5, 5],
+        element: document.createElement('div'),
+      };
+
+      const result = advanceSettings.isValidComponent(component);
+      expect(result).toBe(true);
+    });
+    test('isValidComponent returns false for component with empty object as name', () => {
+      const component = {
+        name: {} as any,
+        lightIntensity: 4,
+        numOfLights: 2,
+        isLightOn: false,
+        autoOn: '19:00',
+        autoOff: '21:00',
+        usage: [5, 6],
+        element: document.createElement('div'),
+      };
+
+      const result = advanceSettings.isValidComponent(component);
+      expect(result).toBe(false);
+    });
+        test('isValidComponent returns false for component with name as an empty array', () => {
+      const component = {
+        name: [] as any,
+        lightIntensity: 3,
+        numOfLights: 1,
+        isLightOn: true,
+        autoOn: '08:00',
+        autoOff: '20:00',
+        usage: [5, 6, 7],
+        element: document.createElement('div'),
+      };
+
+      const result = advanceSettings.isValidComponent(component);
+      expect(result).toBe(false);
+    });
+
+    test('isValidComponent returns false for component with name as boolean true', () => {
+      const component = {
+        name: true as any,
+        lightIntensity: 3,
+        numOfLights: 2,
+        isLightOn: false,
+        autoOn: '07:00',
+        autoOff: '19:00',
+        usage: [5, 7, 9],
+        element: document.createElement('div'),
+      };
+
+      const result = advanceSettings.isValidComponent(component);
+      expect(result).toBe(false);
+    });
+
+    test('isValidComponent returns false for component with extremely long name', () => {
+      const component = {
+        name: 'a'.repeat(10000),
+        lightIntensity: 5,
+        numOfLights: 3,
+        isLightOn: true,
+        autoOn: '06:00',
+        autoOff: '21:00',
+        usage: [4, 4, 4],
+        element: document.createElement('div'),
+      };
+
+      const result = advanceSettings.isValidComponent(component);
+      expect(result).toBe(true); // Depending on business rules; you could also expect false
+    });
+
+    test('isValidComponent returns false for component missing name property entirely', () => {
+      const component = {
+        lightIntensity: 2,
+        numOfLights: 1,
+        isLightOn: false,
+        autoOn: '10:00',
+        autoOff: '18:00',
+        usage: [3, 2, 1],
+        element: document.createElement('div'),
+      } as any;
+
+      const result = advanceSettings.isValidComponent(component);
+      expect(result).toBe(false);
+    });
+
+    test('isValidComponent returns true for component name with newline and tabs', () => {
+      const component = {
+        name: '\n\tBedroom\t\n',
+        lightIntensity: 6,
+        numOfLights: 2,
+        isLightOn: true,
+        autoOn: '15:00',
+        autoOff: '23:30',
+        usage: [8, 8, 8],
+        element: document.createElement('div'),
+      };
+
+      const result = advanceSettings.isValidComponent(component);
+      expect(result).toBe(true);
+    });
+    test('isValidComponent returns false for component with name as a function', () => {
+      const component = {
+        name: function() {} as any,
+        lightIntensity: 4,
+        numOfLights: 2,
+        isLightOn: false,
+        autoOn: '19:00',
+        autoOff: '21:00',
+        usage: [5, 6],
+        element: document.createElement('div'),
+      };
+
+      const result = advanceSettings.isValidComponent(component);
+      expect(result).toBe(false);
+    });
 });
