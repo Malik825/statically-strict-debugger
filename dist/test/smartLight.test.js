@@ -1,28 +1,24 @@
+"use strict";
 // import Light from '../js/basicSettings';
 // import AdvanceSettings from '../js/advanceSettings';
 // import WifiController from '../js/WifiConfig';
-
 // interface Component {
 //   name: string;
 //   lightIntensity: number;
 //   isLightOn: boolean;
 //   element?: HTMLElement;
 // }
-
 // describe('Smart Light App - Pure Functions', () => {
 //   let lightController: Light;
 //   let advanceSettings: AdvanceSettings;
-
 //   beforeEach(() => {
 //     const wifiController = new WifiController();
 //     lightController = new Light(wifiController);
 //     advanceSettings = new AdvanceSettings();
 //   });
-
 //   afterEach(() => {
 //     jest.restoreAllMocks();
 //   });
-
 //   describe('Light', () => {
 //     test('getComponent returns component for valid room name', () => {
 //       const component = lightController.getComponent('hall');
@@ -30,13 +26,11 @@
 //       expect(component?.lightIntensity).toBe(5);
 //       expect(component?.isLightOn).toBe(false);
 //     });
-
 //     test('getComponent returns undefined for invalid room name', () => {
 //       const component = lightController.getComponent('invalid');
 //       expect(component).toBeUndefined();
 //     });
 //   });
-
 //   describe('AdvanceSettings', () => {
 //     test('isValidComponent returns true for valid component', () => {
 //       const component = {
@@ -49,11 +43,9 @@
 //         usage: [22, 11, 12, 10, 12, 17, 22],
 //         element: document.createElement('div'),
 //       };
-
 //       const result = advanceSettings.isValidComponent(component);
 //       expect(result).toBe(true);
 //     });
-
 //     test('isValidComponent returns false for component without name', () => {
 //       const component = {
 //         name: '',
@@ -65,11 +57,9 @@
 //         usage: [22, 11, 12, 10, 12, 17, 22],
 //         element: document.createElement('div'),
 //       };
-
 //       const result = advanceSettings.isValidComponent(component);
 //       expect(result).toBe(false);
 //     });
-
 //     test('isValidComponent returns false for component with undefined name', () => {
 //       const component = {
 //         name: undefined as any,
@@ -81,23 +71,18 @@
 //         usage: [22, 11, 12, 10, 12, 17, 22],
 //         element: document.createElement('div'),
 //       };
-
 //       const result = advanceSettings.isValidComponent(component);
 //       expect(result).toBe(false);
 //     });
-
 //     // ✅ Additional test cases
-
 //     test('isValidComponent returns false for null component', () => {
 //       const result = advanceSettings.isValidComponent(null as any);
 //       expect(result).toBe(false);
 //     });
-
 //     test('isValidComponent returns false for component with no properties', () => {
 //       const result = advanceSettings.isValidComponent({} as any);
 //       expect(result).toBe(false);
 //     });
-
 //     test('isValidComponent returns false when name is a number', () => {
 //       const component = {
 //         name: 123 as any,
@@ -109,11 +94,9 @@
 //         usage: [22, 11, 12, 10, 12, 17, 22],
 //         element: document.createElement('div'),
 //       };
-
 //       const result = advanceSettings.isValidComponent(component);
 //       expect(result).toBe(false);
 //     });
-
 //     test('isValidComponent returns true even if optional element is missing', () => {
 //       const component = {
 //         name: 'Kitchen',
@@ -125,7 +108,6 @@
 //         usage: [10, 12, 14, 16, 18, 20, 22]
 //         // no element
 //       };
-
 //       const result = advanceSettings.isValidComponent(component);
 //       expect(result).toBe(true);
 //     });
@@ -141,11 +123,9 @@
 //         usage: [5, 6],
 //         element: document.createElement('div'),
 //       };
-
 //       const result = advanceSettings.isValidComponent(component);
 //       expect(result).toBe(false);
 //     });
-
 //     test('isValidComponent returns false for component with null name', () => {
 //       const component = {
 //         name: null as any,
@@ -157,11 +137,9 @@
 //         usage: [10, 11],
 //         element: document.createElement('div'),
 //       };
-
 //       const result = advanceSettings.isValidComponent(component);
 //       expect(result).toBe(false);
 //     });
-
 //     test('isValidComponent returns false for component with name as object', () => {
 //       const component = {
 //         name: { value: 'Room' } as any,
@@ -173,11 +151,9 @@
 //         usage: [9, 10],
 //         element: document.createElement('div'),
 //       };
-
 //       const result = advanceSettings.isValidComponent(component);
 //       expect(result).toBe(false);
 //     });
-
 //     test('isValidComponent returns true for component with mixed-case name', () => {
 //       const component = {
 //         name: 'BeDRoom',
@@ -189,11 +165,9 @@
 //         usage: [11, 13, 15, 12, 9, 7, 6],
 //         element: document.createElement('div'),
 //       };
-
 //       const result = advanceSettings.isValidComponent(component);
 //       expect(result).toBe(true);
 //     });
-
 //     test('isValidComponent returns true for component with special characters in name', () => {
 //       const component = {
 //         name: 'Kids&Babies',
@@ -205,7 +179,6 @@
 //         usage: [5, 5, 5, 5, 5, 5, 5],
 //         element: document.createElement('div'),
 //       };
-
 //       const result = advanceSettings.isValidComponent(component);
 //       expect(result).toBe(true);
 //     });
@@ -220,7 +193,6 @@
 //         usage: [5, 6],
 //         element: document.createElement('div'),
 //       };
-
 //       const result = advanceSettings.isValidComponent(component);
 //       expect(result).toBe(false);
 //     });
@@ -235,11 +207,9 @@
 //         usage: [5, 6, 7],
 //         element: document.createElement('div'),
 //       };
-
 //       const result = advanceSettings.isValidComponent(component);
 //       expect(result).toBe(false);
 //     });
-
 //     test('isValidComponent returns false for component with name as boolean true', () => {
 //       const component = {
 //         name: true as any,
@@ -251,11 +221,9 @@
 //         usage: [5, 7, 9],
 //         element: document.createElement('div'),
 //       };
-
 //       const result = advanceSettings.isValidComponent(component);
 //       expect(result).toBe(false);
 //     });
-
 //     test('isValidComponent returns false for component with extremely long name', () => {
 //       const component = {
 //         name: 'a'.repeat(10000),
@@ -267,11 +235,9 @@
 //         usage: [4, 4, 4],
 //         element: document.createElement('div'),
 //       };
-
 //       const result = advanceSettings.isValidComponent(component);
 //       expect(result).toBe(true); // Depending on business rules; you could also expect false
 //     });
-
 //     test('isValidComponent returns false for component missing name property entirely', () => {
 //       const component = {
 //         lightIntensity: 2,
@@ -282,11 +248,9 @@
 //         usage: [3, 2, 1],
 //         element: document.createElement('div'),
 //       } as any;
-
 //       const result = advanceSettings.isValidComponent(component);
 //       expect(result).toBe(false);
 //     });
-
 //     test('isValidComponent returns true for component name with newline and tabs', () => {
 //       const component = {
 //         name: '\n\tBedroom\t\n',
@@ -298,7 +262,6 @@
 //         usage: [8, 8, 8],
 //         element: document.createElement('div'),
 //       };
-
 //       const result = advanceSettings.isValidComponent(component);
 //       expect(result).toBe(true);
 //     });
@@ -313,7 +276,6 @@
 //         usage: [5, 6],
 //         element: document.createElement('div'),
 //       };
-
 //       const result = advanceSettings.isValidComponent(component);
 //       expect(result).toBe(false);
 //     });

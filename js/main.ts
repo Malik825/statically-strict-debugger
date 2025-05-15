@@ -1,7 +1,7 @@
 'use strict';
 
 import Light from './basicSettings';
-import AdvanceSettings from './advanceSettings.ts';
+import AdvanceSettings from './advanceSettings';
 
 import WifiController from './WifiConfig';
 import AIFeatures from './AiFeatures';
